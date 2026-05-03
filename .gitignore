@@ -36,3 +36,9 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # node binaries
 */*.node
+
+# probe outputs + downloaded bun versions for matrix runs
+results/
+.bun-versions/
+script/candidates/extracted.txt
+script/candidates/generated.txt

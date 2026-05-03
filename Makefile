@@ -18,10 +18,12 @@ CXXFLAGS := \
 PROBE_LAZY   := script/probe_lazy.node
 PROBE_DIRECT := script/probe_direct.node
 SLIDE        := script/slide.node
+SAMPLER      := script/sampler.node
+CRASH_PROBE  := script/crash_probe.node
 
 .PHONY: all clean
 
-all: $(PROBE_LAZY) $(PROBE_DIRECT) $(SLIDE)
+all: $(PROBE_LAZY) $(PROBE_DIRECT) $(SLIDE) $(SAMPLER) $(CRASH_PROBE)
 
 # probe — strategy 1: defer all unresolved symbols to the host at load time
 $(PROBE_LAZY): script/probe.cc
@@ -41,5 +43,17 @@ $(SLIDE): script/slide.cc
 	  $(CXXFLAGS) -o $@ $<
 	@echo "built $@"
 
+# sampler — gets VM pointer and drives JSC SamplingProfiler via resolved offsets
+$(SAMPLER): script/sampler.cc
+	clang++ -bundle -undefined dynamic_lookup \
+	  $(CXXFLAGS) -o $@ $<
+	@echo "built $@"
+
+# crash_probe — wraps samplesAsJSON with SIGSEGV handler to capture fault PC
+$(CRASH_PROBE): script/crash_probe.cc
+	clang++ -bundle -undefined dynamic_lookup \
+	  $(CXXFLAGS) -o $@ $<
+	@echo "built $@"
+
 clean:
-	rm -f $(PROBE_LAZY) $(PROBE_DIRECT) $(SLIDE)
+	rm -f $(PROBE_LAZY) $(PROBE_DIRECT) $(SLIDE) $(SAMPLER) $(CRASH_PROBE)

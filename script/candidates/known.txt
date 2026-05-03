@@ -1,0 +1,36 @@
+# candidates/known.txt
+#
+# Hand-picked symbols. These are tried in addition to any candidates
+# produced by extract-jsc-symbols.sh (from the real Bun binary) and
+# generate-candidates.sh (from forward-declared stubs).
+#
+# Lines starting with # are comments. Leading/trailing whitespace is trimmed.
+
+# ---- Baseline sanity checks ----
+# Any of these failing means the probe itself is broken; ignore JSC results.
+malloc
+free
+dlsym
+pthread_create
+
+# ---- Potential Bun C-ish helpers ----
+# These are speculative. If any resolve, it likely means Bun has started
+# exposing a stable C surface for embedders/addons. Worth checking on each
+# Bun release.
+Bun__getVM
+Bun__getSamplingProfiler
+Bun__VM__current
+Bun__heapProfiler
+bun_vm_current
+bun_sampling_profiler_start
+bun_sampling_profiler_stop
+
+# ---- JSC C API (it exists; question is whether Bun exposes it) ----
+# WebKit ships a stable C wrapper around JSC. If Bun keeps these exports,
+# we can use them without any C++ mangling concerns.
+JSContextGroupCreate
+JSGlobalContextCreate
+JSObjectMake
+JSValueMakeString
+JSStringCreateWithUTF8CString
+JSEvaluateScript
